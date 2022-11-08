@@ -1,20 +1,27 @@
 import React from "react";
+import { FaArrowCircleRight } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
-const servicesCard = () => {
+const ServicesCard = ({ service }) => {
+  const { title, price, img, _id } = service;
+  console.log(service, "this is service");
   return (
     <div className="card card-compact w-96 bg-base-100 shadow-xl">
       <figure>
-        <img src="https://placeimg.com/400/225/arch" alt="Shoes" />
+        <img src={img} alt="Shoes" className="min-h-4/5 w-full" />
       </figure>
       <div className="card-body">
-        <h2 className="card-title">Shoes!</h2>
-        <p>If a dog chews shoes whose shoes does he choose?</p>
-        <div className="card-actions justify-end">
-          <button className="btn btn-primary">Buy Now</button>
+        <h2 className="card-title">{title}</h2>
+
+        <div className="card-actions text-2xl font-bold text-[#fd3811]  justify-between">
+          <p>{price}</p>
+          <Link to={`/services/checkOut/${_id}`} className="">
+            <FaArrowCircleRight />
+          </Link>
         </div>
       </div>
     </div>
   );
 };
 
-export default servicesCard;
+export default ServicesCard;

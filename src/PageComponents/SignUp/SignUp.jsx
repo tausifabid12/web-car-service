@@ -1,4 +1,5 @@
-import React from "react";
+import { GoogleAuthProvider } from "firebase/auth";
+import React, { useState } from "react";
 import { useContext } from "react";
 import { FaFacebook, FaGoogle } from "react-icons/fa";
 import { Link } from "react-router-dom";
@@ -6,16 +7,35 @@ import loginImg from "../../assets/images/login/login.svg";
 import { AuthContext } from "../../constexts/AuthProvider/AuthProvider";
 
 const SignUp = () => {
+  const [error, setError] = useState("");
+  const googleProvider = new GoogleAuthProvider();
   const { createUser, SocialLogin } = useContext(AuthContext);
   const handleSubmit = (e) => {
     e.preventDefault();
     const from = e.target;
-    const name = from.name.value;
+    // const name = from.name.value;
     const email = from.email.value;
     const password = from.password.value;
     createUser(email, password)
-      .then((result) => console.log(result.user))
-      .catch((err) => console.log(err));
+      .then((result) => {
+        console.log(result.user);
+        alert("sighup successfully done");
+        from.reset();
+        setError("");
+      })
+      .catch((err) => {
+        setError(err.message);
+        from.reset();
+      });
+  };
+
+  const handleGoogleSignIn = () => {
+    SocialLogin(googleProvider)
+      .then((result) => {
+        console.log(result.user);
+        setError("");
+      })
+      .catch((err) => setError(err.message));
   };
   return (
     <div className="hero min-h-screen py-8 ">
@@ -26,6 +46,7 @@ const SignUp = () => {
         <div className="card  w-full shadow-2xl  py-3">
           <h1 className="text-5xl font-bold text-center">SignUp now!</h1>
           <form onSubmit={handleSubmit} className="card-body">
+            <p className="text-red-500 text-center py-2 font-bold">{error}</p>
             <div className="form-control">
               <label className="label">
                 <span className="label-text">Name</span>
@@ -78,7 +99,10 @@ const SignUp = () => {
           </p>
           <div className="divider px-4">Sign up with Social</div>
           <div className="mx-auto my-5 flex">
-            <span className="text-2xl mr-3 hover:text-[#fd3811]">
+            <span
+              onClick={handleGoogleSignIn}
+              className="text-2xl mr-3 hover:text-[#fd3811]"
+            >
               <FaGoogle />
             </span>
             <span className="text-2xl hover:text-[#fd3811]">

@@ -6,6 +6,7 @@ import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
   signInWithPopup,
+  signOut,
 } from "firebase/auth";
 import { app } from "../../firebase/firebase";
 import { useState } from "react";
@@ -23,21 +24,31 @@ const AuthProvider = ({ children }) => {
   };
 
   const login = (email, pass) => {
+    setLoading(true);
     return signInWithEmailAndPassword(auth, email, pass);
   };
   const SocialLogin = (provider) => {
+    setLoading(true);
     return signInWithPopup(auth, provider);
+  };
+  const logOut = () => {
+    setLoading(true);
+    return signOut(auth);
   };
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      console.log(currentUser, "this is from useEffect");
+      console.log(currentUser);
       setUser(currentUser);
+      setLoading(false);
     });
-    return () => unsubscribe();
+
+    return () => {
+      return unsubscribe();
+    };
   }, []);
 
-  const authInfo = { user, loading, createUser, login, SocialLogin };
+  const authInfo = { user, loading, createUser, login, SocialLogin, logOut };
 
   return (
     <AuthContext.Provider value={authInfo}>{children}</AuthContext.Provider>
